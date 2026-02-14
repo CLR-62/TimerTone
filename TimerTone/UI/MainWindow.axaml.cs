@@ -53,13 +53,8 @@ public partial class MainWindow : Window
         {
             ToggleMonitor();
         };
-        ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Pending);
-        
-        if (programsList.Count > 0)
-        {
-            monitoring = false;
-            ToggleMonitor();
-        }
+        if(!monitoring)
+            ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Pending);
     }
 
     private void RefreshStatusLabel(object sender, ProgramStatusChangedEventArgs e)
@@ -144,6 +139,12 @@ public partial class MainWindow : Window
         }
         programsList = new List<ProgramListItem>(tempProgList);
         RefreshProgramList();
+        
+        if (programsList.Count > 0)
+        {
+            monitoring = false;
+            ToggleMonitor();
+        }
     }
 
     protected override void OnClosed(EventArgs e)
@@ -274,13 +275,13 @@ public partial class MainWindow : Window
             }
             else
             {
-                if(ProgramStatusHandler.CurrentProgramStatus != ProgramStatus.Monitoring)
+                if(!monitoring)
                     ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ErrorPAx2);
             }
         }
         catch
         {
-            if(ProgramStatusHandler.CurrentProgramStatus != ProgramStatus.Monitoring)
+            if(!monitoring)
                 ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ErrorPAx1);
         }
     }
