@@ -16,236 +16,8 @@
         ExtendClientAreaTitleBarHeightHint="-1"
         Foreground="#f0f6fc">
 
-    <Window.Resources>
-        <!-- Accent gradient for highlights -->
-        <LinearGradientBrush x:Key="AccentGradient" StartPoint="0%,0%" EndPoint="100%,0%">
-            <GradientStop Color="#238636" Offset="0"/>
-            <GradientStop Color="#2ea043" Offset="0.5"/>
-            <GradientStop Color="#3fb950" Offset="1"/>
-        </LinearGradientBrush>
-
-        <LinearGradientBrush x:Key="DangerGradient" StartPoint="0%,0%" EndPoint="100%,0%">
-            <GradientStop Color="#da3633" Offset="0"/>
-            <GradientStop Color="#f85149" Offset="1"/>
-        </LinearGradientBrush>
-
-        <LinearGradientBrush x:Key="SubtleBorderGradient" StartPoint="0%,0%" EndPoint="0%,100%">
-            <GradientStop Color="#1a2332" Offset="0"/>
-            <GradientStop Color="#151b23" Offset="1"/>
-        </LinearGradientBrush>
-    </Window.Resources>
-
-    <Window.Styles>
-        <!-- ═══════════════════════════════════════════ -->
-        <!--    FRUTIGER AERO DARK — TRANSPARENT BTN    -->
-        <!-- ═══════════════════════════════════════════ -->
-        <Style Selector="Button.Trans">
-            <Setter Property="Foreground" Value="#9eb4cc"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="CornerRadius" Value="3"/>
-            <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="Width" Value="36"/>
-            <Setter Property="Height" Value="36"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
-                    <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
-                    <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Button.Trans:pointerover /template/ ContentPresenter">
-            <Setter Property="Foreground" Value="#e8f0ff"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#3855688a" Offset="0"/>
-                        <GradientStop Color="#2030405a" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="BorderBrush" Value="#4080b0e0"/>
-        </Style>
-
-        <!-- Close button — red glass glow on hover -->
-        <Style Selector="Button.CloseBtn:pointerover /template/ ContentPresenter">
-            <Setter Property="Foreground" Value="#ffffff"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#CCe05555" Offset="0"/>
-                        <GradientStop Color="#99b03030" Offset="0.5"/>
-                        <GradientStop Color="#CCc84040" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="BorderBrush" Value="#88ff6666"/>
-        </Style>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!--    FRUTIGER AERO DARK — DANGER BUTTON      -->
-        <!-- ═══════════════════════════════════════════ -->
-        <Style Selector="Button.Danger">
-            <Setter Property="Foreground" Value="#ff8a80"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="6"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Opacity" Value="0.7"/>
-            <Setter Property="BorderBrush" Value="#40ff6060"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#28803030" Offset="0"/>
-                        <GradientStop Color="#18501818" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-                    <BrushTransition Property="BorderBrush" Duration="0:0:0.25"/>
-                    <BrushTransition Property="Background" Duration="0:0:0.25"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Button.Danger:pointerover">
-            <Setter Property="Opacity" Value="1"/>
-        </Style>
-        <Style Selector="Button.Danger:pointerover /template/ ContentPresenter">
-            <Setter Property="BorderBrush" Value="#88ff6666"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#55e04545" Offset="0"/>
-                        <GradientStop Color="#38802828" Offset="0.5"/>
-                        <GradientStop Color="#50c03838" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!--   FRUTIGER AERO DARK — SECONDARY (GREEN)   -->
-        <!-- ═══════════════════════════════════════════ -->
-        <Style Selector="Button.Secondary">
-            <Setter Property="Foreground" Value="#80d8a0"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="6"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Opacity" Value="0.7"/>
-            <Setter Property="BorderBrush" Value="#4050b870"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#20306838" Offset="0"/>
-                        <GradientStop Color="#14204020" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
-                    <BrushTransition Property="BorderBrush" Duration="0:0:0.25"/>
-                    <BrushTransition Property="Background" Duration="0:0:0.25"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Button.Secondary:pointerover">
-            <Setter Property="Opacity" Value="1"/>
-        </Style>
-        <Style Selector="Button.Secondary:pointerover /template/ ContentPresenter">
-            <Setter Property="BorderBrush" Value="#8860dd80"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#5538a050" Offset="0"/>
-                        <GradientStop Color="#38206830" Offset="0.5"/>
-                        <GradientStop Color="#4830903e" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!--   FRUTIGER AERO DARK — PRIMARY GLASS BTN   -->
-        <!-- ═══════════════════════════════════════════ -->
-        <Style Selector="Button.Primary">
-            <Setter Property="Foreground" Value="#ffffff"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="16,8"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#6050c870"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#BB40a855" Offset="0"/>
-                        <GradientStop Color="#88288838" Offset="0.45"/>
-                        <GradientStop Color="#AA30953e" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="Background" Duration="0:0:0.25"/>
-                    <BrushTransition Property="BorderBrush" Duration="0:0:0.25"/>
-                    <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="Button.Primary:pointerover">
-            <Setter Property="RenderTransform" Value="scale(1.04)"/>
-        </Style>
-        <Style Selector="Button.Primary:pointerover /template/ ContentPresenter">
-            <Setter Property="BorderBrush" Value="#9070e890"/>
-            <Setter Property="Background">
-                <Setter.Value>
-                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="0%,100%">
-                        <GradientStop Color="#DD55c868" Offset="0"/>
-                        <GradientStop Color="#AA38a848" Offset="0.45"/>
-                        <GradientStop Color="#CC45b855" Offset="1"/>
-                    </LinearGradientBrush>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- ═══════════════════════════════════════════ -->
-        <!--         LISTBOX STYLES                     -->
-        <!-- ═══════════════════════════════════════════ -->
-        <Style Selector="ListBox">
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
-        <Style Selector="ListBoxItem">
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="4,3"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Transitions">
-                <Transitions>
-                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
-                </Transitions>
-            </Setter>
-        </Style>
-        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="#151b23"/>
-        </Style>
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="#1a2332"/>
-        </Style>
-    </Window.Styles>
-
-    <!-- ═══════════════════════════════════════════════ -->
-    <!--              MAIN LAYOUT                       -->
-    <!-- ═══════════════════════════════════════════════ -->
     <Grid RowDefinitions="40, *">
 
-        <!-- ─────────── TITLE BAR ─────────── -->
         <Border x:Name="HeadBorder"
                 Background="#0d1117"
                 BorderBrush="#1a2332"
@@ -266,26 +38,6 @@
                                VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Aero mode button 
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                    <Button Name="OpenAeroBtn"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            CornerRadius="4"
-                            Padding="8,3"
-                            Cursor="Hand"
-                            Classes="Trans">
-                        <StackPanel Orientation="Horizontal" Spacing="5">
-                            <TextBlock Text="🪟" FontSize="11" VerticalAlignment="Center"/>
-                            <TextBlock Text="Aero" FontSize="11" Foreground="#8b949e" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>-->
-
-                <!-- Window controls -->
                 <StackPanel Grid.Column="2"
                             Orientation="Horizontal"
                             VerticalAlignment="Center"
@@ -305,7 +57,7 @@
             </Grid>
         </Border>
 
-        <!-- ─────────── CONTENT AREA ─────────── -->
+        
         <Border Grid.Row="1" Margin="12,12,12,12">
             <Grid RowDefinitions="Auto, Auto, *">
 
@@ -321,7 +73,7 @@
                                Margin="0,4,0,0"/>
                 </StackPanel>
 
-                <!-- Action Bar -->
+                
                 <Border Grid.Row="1"
                         Background="#0d1117"
                         CornerRadius="10"
@@ -330,13 +82,10 @@
                         BorderBrush="#1a2332"
                         BorderThickness="1">
                     <Grid ColumnDefinitions="*, Auto, Auto">
-                        <!-- Stats summary -->
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Center"
                                     Spacing="16">
                             <StackPanel Orientation="Horizontal" Spacing="6">
-                                <!--<Border Width="8" Height="8" CornerRadius="4"
-                                        Background="#3fb950" VerticalAlignment="Center"/>-->
                                 <TextBlock Text="Status label"
                                            FontSize="12"
                                            x:Name="StatusLabelBlock"
@@ -345,7 +94,6 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <!-- New program button -->
                         <Button Grid.Column="1"
                                 Classes="Secondary"
                                 Margin="10,0"
@@ -382,7 +130,7 @@
                     </Grid>
                 </Border>
 
-                <!-- ─────────── PROGRAMS LIST ─────────── -->
+                
                 <Border Grid.Row="2"
                         Background="#0d1117"
                         CornerRadius="12"
@@ -416,7 +164,7 @@
                                                        HorizontalAlignment="Center"/>
                                             </Border>
 
-                                            <!-- Program Info -->
+                                            
                                             <StackPanel Grid.Column="1"
                                                         Orientation="Vertical"
                                                         VerticalAlignment="Center"
@@ -442,7 +190,7 @@
                                                 </StackPanel>
                                             </StackPanel>
 
-                                            <!-- Delete Button -->
+                                            
                                             <Button Grid.Column="2"
                                                     Classes="Danger"
                                                     VerticalAlignment="Center"

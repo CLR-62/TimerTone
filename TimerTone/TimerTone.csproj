@@ -42,9 +42,15 @@
     </ItemGroup>
 
     <ItemGroup>
+      <AvaloniaResource Include="Gfx\TrayIcons\appIcon.ico" />
       <None Remove="Gfx\Icons\delete_icon.png" />
       <AvaloniaResource Include="Gfx\Icons\delete_icon.png" />
       <None Remove="Gfx\Icons\appIcon.png" />
       <AvaloniaResource Include="Gfx\Icons\appIcon.png" />
+      <None Remove="UI\appIcon.ico" />
+      <None Remove="Gfx\TrayIcons\appDisabled.ico" />
+      <AvaloniaResource Include="Gfx\TrayIcons\appDisabled.ico" />
+      <None Remove="Gfx\TrayIcons\appEnabled.ico" />
+      <AvaloniaResource Include="Gfx\TrayIcons\appEnabled.ico" />
     </ItemGroup>
 </Project>

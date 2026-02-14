@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Timers;
 using Avalonia.Threading;
 
@@ -11,8 +10,8 @@ namespace TimerTone.Core;
 public class ProcessesMonitor
 {
     private Timer _timer;
-    private Dictionary<int, ProcessInfo> _processes = new Dictionary<int, ProcessInfo>();
-    private readonly object _lock = new object();
+    private Dictionary<int, ProcessInfo> _processes = new();
+    private readonly object _lock = new();
     
     public event EventHandler<ProcessEventArgs> ProcessStarted;
     public event EventHandler<ProcessEventArgs> ProcessStopped;
@@ -62,8 +61,7 @@ public class ProcessesMonitor
                                 Id = process.Id,
                                 Name = process.ProcessName,
                                 StartTime = process.StartTime,
-                                Path = GetProcessPath(process),
-                                WindowTitle = process.MainWindowTitle
+                                Path = GetProcessPath(process)
                             };
                             
                             _processes[process.Id] = processInfo;
@@ -75,7 +73,6 @@ public class ProcessesMonitor
                                     ProcessName = processInfo.Name,
                                     ProcessId = processInfo.Id,
                                     Path = processInfo.Path,
-                                    WindowTitle = processInfo.WindowTitle,
                                     TimeStamp = DateTime.Now
                                 });
                             });
@@ -142,7 +139,6 @@ public class ProcessesMonitor
         public string Name { get; set; }
         public DateTime StartTime { get; set; }
         public string Path { get; set; }
-        public string WindowTitle { get; set; }
     }
 }
 

@@ -5,10 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using TimerTone.Core;
 namespace TimerTone.UI;
@@ -21,8 +24,6 @@ public partial class MainWindow : Window
     private bool monitoring = false;
     
     private string SavesFolderPath = Path.Combine(AppContext.BaseDirectory, "Saves");
-    
-    public ProgramStatus currentProgramStatus = ProgramStatus.Loading;
 
     public MainWindow()
     {
@@ -34,7 +35,7 @@ public partial class MainWindow : Window
         AddHandler(DragDrop.DropEvent, OnDrop);
         Monitor.ProcessStarted += OnProcessOpened;
         Monitor.ProcessStopped += OnProcessClosed;
-        ChangeProgramStatus(ProgramStatus.Loading);
+        ProgramStatusHandler.OnProgramStatusChanged += RefreshStatusLabel;
         HeadBorder.PointerPressed += (s, e) =>
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
@@ -42,7 +43,6 @@ public partial class MainWindow : Window
                 this.BeginMoveDrag(e);
             }
         };
-        ChangeProgramStatus(ProgramStatus.Pending);
 
         NewProgramButton.Click += (s, e) =>
         {
@@ -53,7 +53,73 @@ public partial class MainWindow : Window
         {
             ToggleMonitor();
         };
+        ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Pending);
+        
+        if (programsList.Count > 0)
+        {
+            monitoring = false;
+            ToggleMonitor();
+        }
     }
+
+    private void RefreshStatusLabel(object sender, ProgramStatusChangedEventArgs e)
+    {
+        StatusLabelBlock.Text = "Status: " + e.ProgramStatus;
+        if (e.PrevProgramStatus != ProgramStatus.Monitoring)
+        {
+            var icons = new TrayIcons
+            {
+                new TrayIcon
+                {
+                    Icon = new WindowIcon(new Bitmap(AssetLoader.Open(new Uri("avares://TimerTone/Gfx/TrayIcons/appDisabled.ico")))),
+                    Menu = [
+                        new NativeMenuItem("Open"),
+                        new NativeMenuItem("Start Monitoring"),
+                        new NativeMenuItemSeparator(),
+                        new NativeMenuItem("Exit")
+                    ]
+                }
+            };
+            NativeMenuItem openButton = icons[0].Menu.Items[0] as NativeMenuItem;
+            openButton.Click += ((s, e) => { this.Show(); this.WindowState = WindowState.Normal; });
+            
+            NativeMenuItem exitButton = icons[0].Menu.Items[3] as NativeMenuItem;
+            exitButton.Click += ((s, e) => { OnClose_Click(s, new RoutedEventArgs()); });
+            
+            NativeMenuItem startButton = icons[0].Menu.Items[1] as NativeMenuItem;
+            startButton.Click += ((s, e) => { ToggleMonitor(); });
+
+            TrayIcon.SetIcons(Application.Current, icons);
+        }
+        else if (e.ProgramStatus == ProgramStatus.Monitoring)
+        {
+            var icons = new TrayIcons
+            {
+                new TrayIcon
+                {
+                    Icon = new WindowIcon(new Bitmap(AssetLoader.Open(new Uri("avares://TimerTone/Gfx/TrayIcons/appEnabled.ico")))),
+                    Menu = [
+                        new NativeMenuItem("Open"),
+                        new NativeMenuItem("Stop Monitoring"),
+                        new NativeMenuItemSeparator(),
+                        new NativeMenuItem("Exit")
+                    ]
+                }
+            };
+            NativeMenuItem openButton = icons[0].Menu.Items[0] as NativeMenuItem;
+            openButton.Click += ((s, e) => { this.Show(); this.WindowState = WindowState.Normal; });
+            
+            NativeMenuItem exitButton = icons[0].Menu.Items[3] as NativeMenuItem;
+            exitButton.Click += ((s, e) => { OnClose_Click(s, new RoutedEventArgs()); });
+            
+            NativeMenuItem stopButton = icons[0].Menu.Items[1] as NativeMenuItem;
+            stopButton.Click += ((s, e) => { ToggleMonitor(); });
+
+            TrayIcon.SetIcons(Application.Current, icons);
+        }
+    }
+    
+    
 
     public void SavePrograms()
     {
@@ -78,17 +144,13 @@ public partial class MainWindow : Window
         }
         programsList = new List<ProgramListItem>(tempProgList);
         RefreshProgramList();
-        if (programsList.Count > 0)
-        {
-            monitoring = false;
-            ToggleMonitor();
-        }
     }
 
     protected override void OnClosed(EventArgs e)
     {
         Monitor.ProcessStarted -= OnProcessOpened;
         Monitor.ProcessStopped -= OnProcessClosed;
+        ProgramStatusHandler.OnProgramStatusChanged -= RefreshStatusLabel;
         Monitor.Dispose();
         foreach (var prog in programsList)
         {
@@ -143,38 +205,14 @@ public partial class MainWindow : Window
             StartMonitorLabel.Text = "Start";
             StartMonitor.Classes.Add("Secondary");
             Monitor.Stop();
+            ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Pending);
         }
         else
         {
             StartMonitorLabel.Text = "Stop";
             StartMonitor.Classes.Add("Danger");
             Monitor.Start();
-        }
-    }
-
-    public void ChangeProgramStatus(ProgramStatus status)
-    {
-        currentProgramStatus = status;
-        switch (currentProgramStatus)
-        {
-            case ProgramStatus.Loading:
-                StatusLabelBlock.Text = "Status: Loading...";
-                break;
-            case ProgramStatus.Pending:
-                StatusLabelBlock.Text = "Status: Pending";
-                break;
-            case ProgramStatus.NewProgOpened:
-                StatusLabelBlock.Text = "Status: Program Opened";
-                break;
-            case ProgramStatus.ProgramAddSequenceAborted:
-                StatusLabelBlock.Text = "Status: Add Sequence Aborted";
-                break;
-            case ProgramStatus.ProgramAddSequenceCompleted:
-                StatusLabelBlock.Text = "Status: Add Sequence Completed";
-                break;
-            case ProgramStatus.ErrorPAx0:
-                StatusLabelBlock.Text = "Status: Error PAx0";
-                break;
+            ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Monitoring);
         }
     }
 
@@ -193,7 +231,8 @@ public partial class MainWindow : Window
         }
         else
         {
-            ChangeProgramStatus(ProgramStatus.ProgramAddSequenceAborted);
+            if(ProgramStatusHandler.CurrentProgramStatus != ProgramStatus.Monitoring)
+                ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ProgramAddSequenceAborted);
         }
     }
 
@@ -213,7 +252,7 @@ public partial class MainWindow : Window
     {
         if (!path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
         {
-            ChangeProgramStatus(ProgramStatus.ErrorPAx0);
+            ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ErrorPAx0);
             return;
         }
 
@@ -231,16 +270,18 @@ public partial class MainWindow : Window
             {
                 programsList.Add(item);
                 RefreshProgramList();
-                ChangeProgramStatus(ProgramStatus.ProgramAddSequenceCompleted);
+                ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ProgramAddSequenceCompleted);
             }
             else
             {
-                ChangeProgramStatus(ProgramStatus.ErrorPAx2);
+                if(ProgramStatusHandler.CurrentProgramStatus != ProgramStatus.Monitoring)
+                    ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ErrorPAx2);
             }
         }
         catch
         {
-            ChangeProgramStatus(ProgramStatus.ErrorPAx1);
+            if(ProgramStatusHandler.CurrentProgramStatus != ProgramStatus.Monitoring)
+                ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ErrorPAx1);
         }
     }
 
@@ -260,6 +301,7 @@ public partial class MainWindow : Window
     private void OnMinimize_Click(object? sender, RoutedEventArgs e)
     {
         this.WindowState = WindowState.Minimized;
+        this.Hide();
     }
 
     private void OnClose_Click(object? sender, RoutedEventArgs e)
@@ -267,18 +309,4 @@ public partial class MainWindow : Window
         OnClosed(new EventArgs());
         Environment.Exit(0);
     }
-}
-
-public enum ProgramStatus
-{
-    Loading,
-    Pending,
-    NewProgOpened,
-    ProgramAddSequenceAborted,
-    ProgramAddSequenceCompleted,
-    ErrorPAx0, //NON EXE
-    ErrorPAx1, //ERROR DURING CREATING PROGRAM ITEM
-    ErrorPAx2, //ALREADY ADDED
-    Saving,
-    Saved
 }

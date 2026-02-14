@@ -17,6 +17,7 @@ public class ProgramListItem
     
     [JsonIgnore]
     public Stopwatch timer { get; set; } = new();
+    
     [JsonIgnore]
     public TimeSpan TotalElapsed => TimeSpan.FromMilliseconds(ElapsedMs) + timer.Elapsed;
 }

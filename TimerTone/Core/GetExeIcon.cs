@@ -33,12 +33,18 @@ public class ExeIconsService
 
             try
             {
-                using var icon = Icon.FromHandle(largeIcons[0]);
-                using var bmp = icon.ToBitmap();
-                using var ms = new MemoryStream();
-                bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                ms.Position = 0;
-                return new Bitmap(ms);
+                Icon icon = Icon.FromHandle(largeIcons[0]);
+                System.Drawing.Bitmap bmp = icon.ToBitmap();
+                icon.Dispose();
+                
+                using MemoryStream memoryStream = new MemoryStream();
+                
+                bmp.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                bmp.Dispose();
+                
+                memoryStream.Position = 0;
+                
+                return new Bitmap(memoryStream);
             }
             finally
             {
