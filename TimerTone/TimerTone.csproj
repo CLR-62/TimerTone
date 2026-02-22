@@ -7,6 +7,11 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 	<CETCompat>false</CETCompat>
 	<ApplicationIcon>Gfx\Icons\appIcon.ico</ApplicationIcon>
+    	<PublishSingleFile>true</PublishSingleFile>
+    	<TrimMode>link</TrimMode>
+    	<SelfContained>true</SelfContained>
+	<PublishTrimmed>true</PublishTrimmed>
+	<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
     </PropertyGroup>
 
     <ItemGroup>
@@ -52,5 +57,7 @@
       <AvaloniaResource Include="Gfx\TrayIcons\appDisabled.ico" />
       <None Remove="Gfx\TrayIcons\appEnabled.ico" />
       <AvaloniaResource Include="Gfx\TrayIcons\appEnabled.ico" />
+      <None Remove="Gfx\Icons\infoicon.ico" />
+      <AvaloniaResource Include="Gfx\Icons\infoicon.ico" />
     </ItemGroup>
 </Project>

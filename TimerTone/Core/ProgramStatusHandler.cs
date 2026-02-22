@@ -6,14 +6,14 @@ namespace TimerTone.Core;
 
 public static class ProgramStatusHandler
 {
-    public static event EventHandler<ProgramStatusChangedEventArgs> OnProgramStatusChanged;
+    public static event EventHandler<ProgramStatusChangedEventArgs>? OnProgramStatusChanged;
     public static ProgramStatus CurrentProgramStatus { get; private set; } =  ProgramStatus.Loading;
     
     public static void ChangeProgramStatus(ProgramStatus status)
     {
         ProgramStatus prev = status;
         CurrentProgramStatus = status;
-        OnProgramStatusChanged.Invoke(null, new ProgramStatusChangedEventArgs{ ProgramStatus  = status, PrevProgramStatus = prev } );
+        OnProgramStatusChanged?.Invoke(null, new ProgramStatusChangedEventArgs{ ProgramStatus  = status, PrevProgramStatus = prev } );
     }
 }
 

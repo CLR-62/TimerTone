@@ -8,6 +8,7 @@
         <entry key="TimerTone/UI/AeroWindow.axaml" value="TimerTone/TimerTone.csproj" />
         <entry key="TimerTone/UI/App.axaml" value="TimerTone/TimerTone.csproj" />
         <entry key="TimerTone/UI/MainWindow.axaml" value="TimerTone/TimerTone.csproj" />
+        <entry key="TimerTone/UI/MessageBox.axaml" value="TimerTone/TimerTone.csproj" />
       </map>
     </option>
   </component>

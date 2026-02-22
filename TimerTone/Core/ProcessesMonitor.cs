@@ -18,7 +18,7 @@ public class ProcessesMonitor
     
     public ProcessesMonitor()
     {
-        _timer = new Timer(1000);
+        _timer = new Timer(1000); // checking processes every sec(1k milsec)
         _timer.Elapsed += CheckProcesses;
     }
     
@@ -107,7 +107,7 @@ public class ProcessesMonitor
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error checking processes: {ex}");
+            Console.WriteLine($"Error checking processes: {ex}");
         }
     }
     

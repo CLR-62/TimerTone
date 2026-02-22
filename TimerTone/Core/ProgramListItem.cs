@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 
 namespace TimerTone.Core;
@@ -17,6 +18,9 @@ public class ProgramListItem
     
     [JsonIgnore]
     public Stopwatch timer { get; set; } = new();
+    
+    [JsonIgnore]
+    public string activityDotColor { get; set; } = "#da3633";
     
     [JsonIgnore]
     public TimeSpan TotalElapsed => TimeSpan.FromMilliseconds(ElapsedMs) + timer.Elapsed;

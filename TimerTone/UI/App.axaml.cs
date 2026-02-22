@@ -19,12 +19,20 @@ public partial class App : Application
         {
             Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "Saves"));
         }
-        
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow();
-        }
 
-        base.OnFrameworkInitializationCompleted();
+        try
+        {
+          if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+          {
+              desktop.MainWindow = new MainWindow();
+          }
+
+          base.OnFrameworkInitializationCompleted();
+        }
+        catch (Exception e)
+        {
+            MessageBox msg = new MessageBox(e.Message);
+            msg.Show();
+        }
     }
 }

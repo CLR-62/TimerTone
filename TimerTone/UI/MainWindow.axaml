@@ -62,16 +62,21 @@
             <Grid RowDefinitions="Auto, Auto, *">
 
                 <!-- Header Section -->
-                <StackPanel Grid.Row="0" Margin="6,4,6,12">
-                    <TextBlock Text="Programs"
-                               FontSize="22"
-                               FontWeight="Bold"
-                               Foreground="#f0f6fc"/>
-                    <TextBlock Text="Track time spent in your applications"
-                               FontSize="12"
-                               Foreground="#484f58"
-                               Margin="0,4,0,0"/>
-                </StackPanel>
+                <Grid ColumnDefinitions="*,*">
+                    <StackPanel Grid.Row="0" Margin="6,4,6,12">
+                        <TextBlock Text="Programs"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="#f0f6fc"/>
+                        <TextBlock Text="Track time spent in your applications"
+                                   FontSize="12"
+                                   Foreground="#484f58"
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                    
+                    <Button Grid.Column="1" HorizontalAlignment="Right" x:Name="AddToAutorun" Classes="Secondary" Content="Add to Autorun"></Button>
+                    <Button Grid.Column="1" HorizontalAlignment="Right" x:Name="RemoveFromAutorun" Classes="Danger" Content="Remove from Autorun" IsVisible="False"></Button>
+                </Grid>
 
                 
                 <Border Grid.Row="1"
@@ -169,10 +174,16 @@
                                                         Orientation="Vertical"
                                                         VerticalAlignment="Center"
                                                         Margin="14,0,0,0">
+                                                <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="{Binding Name}"
                                                            FontSize="14"
                                                            FontWeight="SemiBold"
                                                            Foreground="#f0f6fc"/>
+                                                <TextBlock Text=" ●"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{Binding activityDotColor}"/>
+                                                </StackPanel>
                                                 <StackPanel Orientation="Horizontal"
                                                             Spacing="8"
                                                             Margin="0,4,0,0">
@@ -186,7 +197,9 @@
                                                     <TextBlock Text="{Binding Path}"
                                                                FontSize="11"
                                                                Foreground="#484f58"
-                                                               VerticalAlignment="Center"/>
+                                                               VerticalAlignment="Center"
+                                                               TextTrimming="WordEllipsis"
+                                                               MaxWidth="410"/>
                                                 </StackPanel>
                                             </StackPanel>
 

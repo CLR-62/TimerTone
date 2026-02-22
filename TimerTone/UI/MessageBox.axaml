@@ -1,0 +1,59 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="175"
+        x:Class="TimerTone.UI.MessageBox"
+        Height="140"
+        Width="370"
+        Title="INFO"
+        CanMaximize="False"
+        Topmost="True"
+        CanResize="False"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="#010409">
+        
+        <Grid RowDefinitions="40, *">
+                <Border x:Name="HeadBorder"
+                        Background="#0d1117"
+                        BorderBrush="#1a2332"
+                        BorderThickness="0,0,0,1">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+                                <!-- App branding -->
+                                <StackPanel Grid.Column="0"
+                                            Orientation="Horizontal"
+                                            VerticalAlignment="Center"
+                                            Margin="14,0,0,0"
+                                            Spacing="8">
+                                        <!-- Small decorative dot -->
+                                        <Image Source="../Gfx/Icons/infoicon.ico" Height="20" Width="20"></Image>
+                                        <TextBlock Text="TimerTone"
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#8b949e"
+                                                   VerticalAlignment="Center"/>
+                                </StackPanel>
+        
+                                <StackPanel Grid.Column="2"
+                                            Orientation="Horizontal"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,6,0"
+                                            Spacing="2">
+                                        <Button Content="─"
+                                                Classes="Trans"
+                                                FontSize="11"
+                                                Background="Transparent"
+                                                Click="OnMinimize_Click"/>
+                                        <Button Content="✕"
+                                                Classes="Trans CloseBtn"
+                                                FontSize="11"
+                                                Background="Transparent"
+                                                Click="OnClose_Click"/>
+                                </StackPanel>
+                        </Grid>
+                </Border>
+                <TextBlock Grid.Row="1" Text="EXCEP" x:Name="datatext" TextWrapping="Wrap" Foreground="#f0f6fc" VerticalAlignment="Center" Margin="10"></TextBlock>
+        </Grid>
+</Window>

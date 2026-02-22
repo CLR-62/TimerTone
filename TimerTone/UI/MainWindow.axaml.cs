@@ -14,6 +14,9 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
 using TimerTone.Core;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Win32;
+
 namespace TimerTone.UI;
 
 public partial class MainWindow : Window
@@ -21,21 +24,19 @@ public partial class MainWindow : Window
     public List<ProgramListItem> programsList { get; private set; } = new();
     public ExeIconsService iconsService;
     public ProcessesMonitor Monitor = new();
+    public StartupHandler startupHandler = new();
     private bool monitoring = false;
+    private bool isInAutoRun = false;
+    RegistryKey? startupKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
     
-    private string SavesFolderPath = Path.Combine(AppContext.BaseDirectory, "Saves");
+    private string _savesFolderPath = Path.Combine(AppContext.BaseDirectory, "Saves");
 
     public MainWindow()
     {
         iconsService = new ExeIconsService();
         
         InitializeComponent();
-        if(File.Exists(Path.Combine(SavesFolderPath, "cfg.json")))
-            LoadPrograms();
         AddHandler(DragDrop.DropEvent, OnDrop);
-        Monitor.ProcessStarted += OnProcessOpened;
-        Monitor.ProcessStopped += OnProcessClosed;
-        ProgramStatusHandler.OnProgramStatusChanged += RefreshStatusLabel;
         HeadBorder.PointerPressed += (s, e) =>
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
@@ -43,7 +44,17 @@ public partial class MainWindow : Window
                 this.BeginMoveDrag(e);
             }
         };
-
+        
+        
+        if(File.Exists(Path.Combine(_savesFolderPath, "cfg.json")))
+            LoadPrograms();
+        
+        
+        Monitor.ProcessStarted += OnProcessOpened;
+        Monitor.ProcessStopped += OnProcessClosed;
+        
+        ProgramStatusHandler.OnProgramStatusChanged += RefreshStatusLabel;
+        
         NewProgramButton.Click += (s, e) =>
         {
             SelectProgram();
@@ -53,8 +64,35 @@ public partial class MainWindow : Window
         {
             ToggleMonitor();
         };
+        
         if(!monitoring)
             ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Pending);
+        
+        #region Autorun
+        if (startupKey.GetValue("TimerTone", "NON") as string 
+            == Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TimerTone.exe"))
+        {
+            isInAutoRun = true;
+            AddToAutorun.IsVisible = false;
+            RemoveFromAutorun.IsVisible = true;
+        }
+
+        AddToAutorun.Click += (s, e) =>
+        {
+            startupHandler.AddToStartup();
+            isInAutoRun = true;
+            AddToAutorun.IsVisible = false;
+            RemoveFromAutorun.IsVisible = true;
+        };
+
+        RemoveFromAutorun.Click += (s, e) =>
+        {
+            startupHandler.RemoveFromStartup();
+            isInAutoRun = false;
+            AddToAutorun.IsVisible = true;
+            RemoveFromAutorun.IsVisible = false;
+        };
+        #endregion
     }
 
     private void RefreshStatusLabel(object sender, ProgramStatusChangedEventArgs e)
@@ -75,6 +113,9 @@ public partial class MainWindow : Window
                     ]
                 }
             };
+            
+            //Fuck nullability possible. ^ there is guaranty
+            
             NativeMenuItem openButton = icons[0].Menu.Items[0] as NativeMenuItem;
             openButton.Click += ((s, e) => { this.Show(); this.WindowState = WindowState.Normal; });
             
@@ -101,6 +142,9 @@ public partial class MainWindow : Window
                     ]
                 }
             };
+            
+            //Fuck nullability possible. ^ there is guaranty
+            
             NativeMenuItem openButton = icons[0].Menu.Items[0] as NativeMenuItem;
             openButton.Click += ((s, e) => { this.Show(); this.WindowState = WindowState.Normal; });
             
@@ -113,9 +157,9 @@ public partial class MainWindow : Window
             TrayIcon.SetIcons(Application.Current, icons);
         }
     }
-    
-    
 
+    //Stupid thing for "trimming" and jsonSerializer both word(trimming in csproj)
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
     public void SavePrograms()
     {
         // Capture current timer state into ElapsedMs before saving
@@ -126,19 +170,21 @@ public partial class MainWindow : Window
         }
         
         string json = JsonSerializer.Serialize(programsList);
-        File.WriteAllText(Path.Combine(SavesFolderPath, "cfg.json"), json);
+        File.WriteAllText(Path.Combine(_savesFolderPath, "cfg.json"), json);
     }
 
+    // the same
+    [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
     public async void LoadPrograms()
     {
-        string json = File.ReadAllText(Path.Combine(SavesFolderPath, "cfg.json"));
+        string json = File.ReadAllText(Path.Combine(_savesFolderPath, "cfg.json"));
         List<ProgramListItem> tempProgList = JsonSerializer.Deserialize<List<ProgramListItem>>(json) ?? new List<ProgramListItem>();
         foreach (var prog in tempProgList)
         {
             prog.progIcon = await iconsService.GetExeIcon(prog.Path);
         }
         programsList = new List<ProgramListItem>(tempProgList);
-        RefreshProgramList();
+        RefreshProgramList(false);
         
         if (programsList.Count > 0)
         {
@@ -168,11 +214,11 @@ public partial class MainWindow : Window
         {
             ProgramListItem prog = programsList.First(p => p.Name == e.ProcessName);
             prog.timer.Stop();
-            // Accumulate elapsed time from this session
             prog.ElapsedMs += prog.timer.ElapsedMilliseconds;
             prog.timer.Reset();
             Console.WriteLine(prog.TotalElapsed);
-            RefreshProgramList();
+            prog.activityDotColor = "#da3633";
+            RefreshProgramList(true);
         }
     }
 
@@ -181,11 +227,13 @@ public partial class MainWindow : Window
         if (programsList.Any(p => p.Name == e.ProcessName))
         {
             ProgramListItem prog = programsList.First(p => p.Name == e.ProcessName);
+            prog.activityDotColor = "#3fb950";
+            RefreshProgramList(false);
             prog.timer.Start();
         }
     }
 
-    void RefreshProgramList()
+    void RefreshProgramList(bool needSave)
     {
         programsListBox.Items.Clear();
         foreach (var program in programsList)
@@ -193,7 +241,8 @@ public partial class MainWindow : Window
             programsListBox.Items.Add(program);
         }
         
-        SavePrograms();
+        if(needSave)
+            SavePrograms();
     }
 
     public void ToggleMonitor()
@@ -264,13 +313,14 @@ public partial class MainWindow : Window
                 Name = path.Split(@"\").Last().Split('.').First(),
                 Path = path,
                 progIcon = await iconsService.GetExeIcon(path),
-                timer = new Stopwatch()
+                timer = new Stopwatch(),
+                activityDotColor = "#da3633"
             };
 
             if (!programsList.Any(p => p.Path == item.Path))
             {
                 programsList.Add(item);
-                RefreshProgramList();
+                RefreshProgramList(true);
                 ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.ProgramAddSequenceCompleted);
             }
             else
@@ -295,7 +345,7 @@ public partial class MainWindow : Window
         if (item != null && programsList.Contains(item))
         {
             programsList.Remove(item);
-            RefreshProgramList();
+            RefreshProgramList(true);
         }
     }
 
@@ -307,7 +357,6 @@ public partial class MainWindow : Window
 
     private void OnClose_Click(object? sender, RoutedEventArgs e)
     {
-        OnClosed(new EventArgs());
-        Environment.Exit(0);
+        Close();
     }
 }
