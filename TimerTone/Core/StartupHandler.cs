@@ -10,7 +10,7 @@ public class StartupHandler
     public void AddToStartup()
     {
         RegistryKey? startupKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-        startupKey.SetValue("TimerTone", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TimerTone.exe"));
+        startupKey.SetValue("TimerTone", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TimerTone.exe /minimized"));
         startupKey.Close();
         startupKey.Dispose();
     }

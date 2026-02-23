@@ -27,12 +27,14 @@ public partial class MainWindow : Window
     public StartupHandler startupHandler = new();
     private bool monitoring = false;
     private bool isInAutoRun = false;
+    private bool  needToStartMinimized = false;
     RegistryKey? startupKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
     
     private string _savesFolderPath = Path.Combine(AppContext.BaseDirectory, "Saves");
 
-    public MainWindow()
+    public MainWindow(bool needToStartMinimized)
     {
+        this.needToStartMinimized = needToStartMinimized;
         iconsService = new ExeIconsService();
         
         InitializeComponent();
@@ -70,7 +72,7 @@ public partial class MainWindow : Window
         
         #region Autorun
         if (startupKey.GetValue("TimerTone", "NON") as string 
-            == Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TimerTone.exe"))
+            == Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TimerTone.exe /minimized"))
         {
             isInAutoRun = true;
             AddToAutorun.IsVisible = false;
@@ -156,6 +158,9 @@ public partial class MainWindow : Window
 
             TrayIcon.SetIcons(Application.Current, icons);
         }
+        
+        if(needToStartMinimized)
+            Minimize();
     }
 
     //Stupid thing for "trimming" and jsonSerializer both word(trimming in csproj)
@@ -350,6 +355,11 @@ public partial class MainWindow : Window
     }
 
     private void OnMinimize_Click(object? sender, RoutedEventArgs e)
+    {
+        Minimize();
+    }
+
+    public void Minimize()
     {
         this.WindowState = WindowState.Minimized;
         this.Hide();
