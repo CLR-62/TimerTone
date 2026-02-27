@@ -67,8 +67,8 @@ public partial class MainWindow : Window
             ToggleMonitor();
         };
         
-        if(!monitoring)
-            ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Pending);
+        
+        
         
         #region Autorun
         if (startupKey.GetValue("TimerTone", "NON") as string 
@@ -95,6 +95,11 @@ public partial class MainWindow : Window
             RemoveFromAutorun.IsVisible = false;
         };
         #endregion
+
+        if (!monitoring)
+        {
+            ProgramStatusHandler.ChangeProgramStatus(ProgramStatus.Pending);
+        }
     }
 
     private void RefreshStatusLabel(object sender, ProgramStatusChangedEventArgs e)
@@ -159,8 +164,10 @@ public partial class MainWindow : Window
             TrayIcon.SetIcons(Application.Current, icons);
         }
         
-        if(needToStartMinimized)
-            Minimize();
+        Console.WriteLine("Changed to " + e.ProgramStatus);
+
+
+
     }
 
     //Stupid thing for "trimming" and jsonSerializer both word(trimming in csproj)
@@ -195,6 +202,10 @@ public partial class MainWindow : Window
         {
             monitoring = false;
             ToggleMonitor();
+            if (needToStartMinimized)
+            {
+                Minimize();
+            }
         }
     }
 
